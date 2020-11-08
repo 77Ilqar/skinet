@@ -9,11 +9,10 @@ using Microsoft.EntityFrameworkCore;
 using Core.Specifications;
 using API.Dtos;
 using AutoMapper;
+using System;
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProductController: ControllerBase
+    public class ProductController: BaseApiController
     {
         private readonly IProductRepository _productRepo;
         private readonly IMapper _mapper;
@@ -24,11 +23,16 @@ namespace API.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts()
+        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts(
+           [FromQuery] ProductSpecParams productParams)
         {
+            // string sort, int? typeId, int? brandId
             // var spec = new ProductsWithTypeAndBrandSpecifications();
             // var products = await _repo.ListAllAsync();
-            var products = await _productRepo.GetProductsAsync();
+            
+            var products = await _productRepo.GetProductsAsync(productParams);
+            var productCount = products.Count();
+            
             return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products));
         }
 
