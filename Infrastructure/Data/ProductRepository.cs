@@ -29,54 +29,130 @@ namespace Infrastructure.Data
         {
             if (productParams.Sort == "priceAsc")
             {
+                if (productParams.Search != null)
+                {
+                    return await _context.Products
+                 .Include(p => p.ProductType)
+                 .Include(p => p.ProductBrand)
+                 .OrderBy(p => p.Price)
+                 .Where(p => p.Name.Contains(productParams.Search))
+                 .Skip(productParams.PageSize * (productParams.PageIndex - 1))
+                 .Take(productParams.PageSize)
+                 .ToListAsync();
+                }
+                else if(productParams.TypeId.HasValue && productParams.BrandId.HasValue)
+                {
+                    return await _context.Products
+                .Include(p => p.ProductType)
+                .Include(p => p.ProductBrand)
+                .Where(p => p.ProductTypeId == productParams.TypeId)
+                .Where(p => p.ProductBrandId == productParams.BrandId)
+                .OrderBy(p => p.Price)
+                .Skip(productParams.PageSize * (productParams.PageIndex - 1))
+                .Take(productParams.PageSize)
+                .ToListAsync();
+                }
+                else if(productParams.TypeId.HasValue)
+                {
                 return await _context.Products
+                .Include(p => p.ProductType)
+                .Include(p => p.ProductBrand)
+                .Where(p => p.ProductTypeId == productParams.TypeId)
+                .OrderBy(p => p.Price)
+                .Skip(productParams.PageSize * (productParams.PageIndex - 1))
+                .Take(productParams.PageSize)
+                .ToListAsync();
+                }
+                else if(productParams.BrandId.HasValue)
+                {
+                return await _context.Products
+                .Include(p => p.ProductType)
+                .Include(p => p.ProductBrand)
+                .Where(p => p.ProductBrandId == productParams.BrandId)
+                .OrderBy(p => p.Price)
+                .Skip(productParams.PageSize * (productParams.PageIndex - 1))
+                .Take(productParams.PageSize)
+                .ToListAsync();
+                }
+                else
+                {
+                    return await _context.Products
                 .Include(p => p.ProductType)
                 .Include(p => p.ProductBrand)
                 .OrderBy(p => p.Price)
                 .Skip(productParams.PageSize * (productParams.PageIndex - 1))
                 .Take(productParams.PageSize)
                 .ToListAsync();
+                }
             }
-            else if (productParams.Sort == "priceDesc")
+            else if(productParams.Sort == "priceDesc")
             {
+                if (productParams.Search != null)
+                {
+                    return await _context.Products
+                 .Include(p => p.ProductType)
+                 .Include(p => p.ProductBrand)
+                 .OrderByDescending(p => p.Price)
+                 .Where(p => p.Name.Contains(productParams.Search))
+                 .Skip(productParams.PageSize * (productParams.PageIndex - 1))
+                 .Take(productParams.PageSize)
+                 .ToListAsync();
+                }
+                else if(productParams.TypeId.HasValue && productParams.BrandId.HasValue)
+                {
+                    return await _context.Products
+                .Include(p => p.ProductType)
+                .Include(p => p.ProductBrand)
+                .Where(p => p.ProductTypeId == productParams.TypeId)
+                .Where(p => p.ProductBrandId == productParams.BrandId)
+                .OrderByDescending(p => p.Price)
+                .Skip(productParams.PageSize * (productParams.PageIndex - 1))
+                .Take(productParams.PageSize)
+                .ToListAsync();
+                }
+                else if(productParams.TypeId.HasValue)
+                {
                 return await _context.Products
+                .Include(p => p.ProductType)
+                .Include(p => p.ProductBrand)
+                .Where(p => p.ProductTypeId == productParams.TypeId)
+                .OrderByDescending(p => p.Price)
+                .Skip(productParams.PageSize * (productParams.PageIndex - 1))
+                .Take(productParams.PageSize)
+                .ToListAsync();
+                }
+                else if(productParams.BrandId.HasValue)
+                {
+                return await _context.Products
+                .Include(p => p.ProductType)
+                .Include(p => p.ProductBrand)
+                .Where(p => p.ProductBrandId == productParams.BrandId)
+                .OrderByDescending(p => p.Price)
+                .Skip(productParams.PageSize * (productParams.PageIndex - 1))
+                .Take(productParams.PageSize)
+                .ToListAsync();
+                }
+                else
+                {
+                    return await _context.Products
                 .Include(p => p.ProductType)
                 .Include(p => p.ProductBrand)
                 .OrderByDescending(p => p.Price)
                 .Skip(productParams.PageSize * (productParams.PageIndex - 1))
                 .Take(productParams.PageSize)
                 .ToListAsync();
+                }
             }
-            else if(productParams.TypeId.HasValue)
-            {
-                return await _context.Products
+            else
+                {
+                    return await _context.Products
                 .Include(p => p.ProductType)
                 .Include(p => p.ProductBrand)
-                .Where(p => p.ProductTypeId == productParams.TypeId)
-                .OrderBy(p => p.Name)
+                .OrderBy(p => p.Price)
                 .Skip(productParams.PageSize * (productParams.PageIndex - 1))
                 .Take(productParams.PageSize)
                 .ToListAsync();
-            }
-            else if(productParams.BrandId.HasValue)
-            {
-                return await _context.Products
-                .Include(p => p.ProductType)
-                .Include(p => p.ProductBrand)
-                .Where(p => p.ProductBrandId == productParams.BrandId)
-                .OrderBy(p => p.Name)
-                .Skip(productParams.PageSize * (productParams.PageIndex - 1))
-                .Take(productParams.PageSize)
-                .ToListAsync();
-            }
-            return await _context.Products
-                .Include(p => p.ProductType)
-                .Include(p => p.ProductBrand)
-                .OrderBy(p => p.Name)
-                .Skip(productParams.PageSize * (productParams.PageIndex - 1))
-                .Take(productParams.PageSize)
-                .ToListAsync();
-
+                }
         }
         public async Task<IReadOnlyList<ProductType>> GetProductTypesAsync()
         {
@@ -93,7 +169,7 @@ namespace Infrastructure.Data
 
         }
         
-        public async Task<int> CountAsync()
+        public async Task<int> GetProductCountAsync()
         {
             return await _context.Products.CountAsync();
         }
